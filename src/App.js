@@ -1,7 +1,4 @@
 import React, {Component} from 'react'
-import ReactLoading from 'react-loading'
-
-
 import Title from './component/Title'
 import WeatherInput from './component/WetherInput'
 import Weather from './component/Weather'
@@ -52,7 +49,6 @@ class App extends Component {
         <Title />
         <WeatherInput getWeather={this.getWeather}/>
         <Weather data={this.state}/>
-        <ReactLoading type="spin" height="100" width="100"/>
       </div>
     );
   }
