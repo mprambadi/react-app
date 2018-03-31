@@ -1,21 +1,61 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react'
+import ReactLoading from 'react-loading'
 
+
+import Title from './component/Title'
+import WeatherInput from './component/WetherInput'
+import Weather from './component/Weather'
+
+const API_KEY = `9fc5af0d3cdfaf3869ccf04585aca733`
 class App extends Component {
-  render() {
+  constructor(props){
+    super(props);
+    this.state = {
+      temperature : undefined,
+      city : undefined,
+      country : undefined,
+      humidity : undefined,
+      description : undefined,
+      error : undefined
+    }
+  }
+  getWeather = async (e) => {
+
+    e.preventDefault();
+    
+    let {city, country} = e.target.elements
+
+    if(city.value && country.value) { 
+    const fetchWeather = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city.value},${country.value}&appid=${API_KEY}&units=metric`);
+    const data = await fetchWeather.json();
+      let {humidity,pressure,temp} = data.main
+      let {name} = data
+      let [desc] = data.weather
+        this.setState({
+          temperature: temp,
+          humidity,
+          pressure,
+          country : data.sys.country,
+          city: name,
+          description: desc.description,
+          error: ""
+        })
+    }
+    this.setState({
+      error: "please enter value"
+    })
+  }
+
+  render(){
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div> 
+        <Title />
+        <WeatherInput getWeather={this.getWeather}/>
+        <Weather data={this.state}/>
+        <ReactLoading type="spin" height="100" width="100"/>
       </div>
     );
   }
 }
 
-export default App;
+export default App
