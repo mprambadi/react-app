@@ -8,7 +8,6 @@ class App extends Component {
     this.state = {
       term: "",
       items: [],
-      id: 0
     };
     this.handleRemove = this.handleRemove.bind(this);
   }
@@ -88,11 +87,11 @@ const InputForm = props => {
 const List = props => {
   return (
     <div>
-      {props.items.map((item, index) => {
+      {props.items.map((item) => {
         return (
           <div
             className="card"
-            key={index}
+            key={item.id}
             onClick={() => props.handleRemove(item.id)}
           >
             <div className="card-body">
