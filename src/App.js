@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 
+window.id = 0;
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       term: "",
-      items: []
+      items: [],
+      id: 0
     };
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   changeInput = e => {
@@ -19,23 +21,41 @@ class App extends Component {
 
   submitInput = e => {
     e.preventDefault();
-
+    const data = {
+      text: this.state.term,
+      id: window.id++
+    }
     this.setState({
       term: "",
-      items: [...this.state.items, this.state.term]
+      items: [...this.state.items, data]
     });
   };
 
+  handleRemove(name) {
+    const remain = this.state.items.filter(el => el.id !== name);
+
+    this.setState({
+      items: remain
+    });
+  }
+
   render() {
     return (
-      <div className="App">
-        <InputForm
-          submitInput={this.submitInput}
-          term={this.state.term}
-          changeInput={this.changeInput}
-        />
+      <div className="container">
+        <div className="row">
+          <div className="col-md-5">
+            <h1>To do Input Form </h1>
+            <InputForm
+              submitInput={this.submitInput}
+              term={this.state.term}
+              changeInput={this.changeInput}
+            />
+          </div>
 
-        <List items={this.state.items} />
+          <div className="col-md-7">
+            <List items={this.state.items} handleRemove={this.handleRemove} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -44,13 +64,23 @@ class App extends Component {
 const InputForm = props => {
   return (
     <form onSubmit={props.submitInput}>
+      <div className="form-group">
+        <input
+          type="text"
+          name="to-do"
+          value={props.term}
+          onChange={props.changeInput}
+          className="form-control"
+          placeholder="input to do"
+        />
+      </div>
+
       <input
-        type="text"
-        name="to-do"
-        value={props.term}
-        onChange={props.changeInput}
+        type="submit"
+        name="send"
+        value="input"
+        className="btn btn-primary"
       />
-      <input type="submit" name="send" value="input" />
     </form>
   );
 };
@@ -60,10 +90,15 @@ const List = props => {
     <div>
       {props.items.map((item, index) => {
         return (
-          <div className="App-underline" key={index}>
-          {/* <p className="App-underline" > */}
-            {item}
-          {/* </p> */}
+          <div
+            className="card"
+            key={index}
+            onClick={() => props.handleRemove(item.id)}
+          >
+            <div className="card-body">
+              <h5 className="card-title">{item.text}</h5>
+              <div className="btn btn-primary">Delete</div>
+            </div>
           </div>
         );
       })}
